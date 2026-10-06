@@ -32,6 +32,7 @@ fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
+    onDeleteCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
@@ -46,18 +47,34 @@ fun CityListScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
-            FloatingActionButton(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                    showAddCityFields = !showAddCityFields
-                    if (showAddCityFields) {
-                        selectedCity = null
-                        editedCityName = ""
-                        editedProvinceName = ""
+            if (selectedCity == null) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(16.dp),
+                    onClick = {
+                        showAddCityFields = !showAddCityFields
+                        if (showAddCityFields) {
+                            selectedCity = null
+                            editedCityName = ""
+                            editedProvinceName = ""
+                        }
                     }
+                ) {
+                    Text("+")
                 }
-            ) {
-                Text("+")
+            } else {
+                FloatingActionButton(
+                    modifier = Modifier.padding(16.dp),
+                    onClick = {
+                        val cityToDelete = selectedCity
+                        selectedCity = null
+                        if (cityToDelete != null) {
+                            onDeleteCity(cityToDelete)
+                        }
+                    },
+                    containerColor = androidx.compose.ui.graphics.Color(255, 10, 10)
+                    ) {
+                    Text("Delete")
+                }
             }
         }
         if (showAddCityFields) {
@@ -173,7 +190,11 @@ fun CityListScreen(
                 }
             }
         }
+
+
+
     }
+
 }
 
 
@@ -213,7 +234,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onDeleteCity = {},
         )
     }
 }
